@@ -239,4 +239,6 @@ python manage.py migrate
   - Add the enviroment variables
     DATABASE_URL -> internal DB url in the render postgreSQL  
     SECRET_KEY -> keygenerator in google
-    PYTHON -> version of python using
+    PYTHON -> 3.10.8 version of python using (google: python render.com version)
+  - deploy button
+  - if are ther any problem change de version of django to 4.0

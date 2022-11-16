@@ -223,6 +223,20 @@ python manage.py migrate
 - install gunicorn
   > pip install gunicorn
 - upload in github
+
   > git add .
   > git commit -m "ready to deploy"
   > git push -u origin <branch>
+
+- create web services
+  - link the github account to the project
+  - name the project
+  - choose python3
+  - modify the build command
+    - ./build.sh
+  - modify start command
+    - gunicorn panicbuttonproject.wsgi <== projectname.wsgi
+  - Add the enviroment variables
+    DATABASE_URL -> internal DB url in the render postgreSQL  
+    SECRET_KEY -> keygenerator in google
+    PYTHON -> version of python using

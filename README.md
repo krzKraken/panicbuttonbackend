@@ -219,3 +219,10 @@ python manage.py collectstatic --no-input
 python manage.py migrate
 
 - chmod a+x build.sh
+
+- install gunicorn
+  > pip install gunicorn
+- upload in github
+  > git add .
+  > git commit -m "ready to deploy"
+  > git push -u origin <branch>

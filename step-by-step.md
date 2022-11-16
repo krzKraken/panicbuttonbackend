@@ -140,3 +140,82 @@ path("", include("panicbuttonapp.urls")), <-- include urls
   db.sqlite3
   venv
   **pycache**
+
+** render.com/docs/deploy-django **
+
+### GO PRODUCTION - READY
+
+- Go to settings.py in the proyect and import os
+  > import os
+
+#### SECURITY WARNING: keep the secret key used in production secret!
+
+SECRET_KEY = os.environ.get('SECRET_KEY', default='your secret key')
+
+#### SECURITY WARNING: don't run with debug turned on in production!
+
+DEBUG = 'RENDER' not in os.environ
+
+#### https://docs.djangoproject.com/en/3.0/ref/settings/#allowed-hosts
+
+ALLOWED_HOSTS = []
+
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')if RENDER_EXTERNAL_HOSTNAME: ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
+# Configure the db postgreSQL
+
+- In render go to PostgreSQL
+- Create a postgreSQL database in render, put the url and db name and create
+- install dj-database-url psycopg2-binary in venv
+  > pip install dj-database-url psycopg2-binary
+- import the dj-databases-url in the panicbuttonproject
+  > import dj-databases-url
+- update de database configuration
+  DATABASES = {
+  'default':
+  dj_database_url.config(
+  default='sqlite:///db.sqlite3',
+  conn_max_age=600,
+  )
+  }
+- Static files configuration
+- Install whitenoise[brotli]
+  > pip install 'whitenoise[brotli]'
+- add middleware in panicbuttonproject/settings.py
+  MIDDLEWARE = [
+  "django.middleware.security.SecurityMiddleware",
+  'whitenoise.middleware.WhiteNoiseMiddleware', **<==|**
+  "django.contrib.sessions.middleware.SessionMiddleware",
+  "django.middleware.common.CommonMiddleware",
+  "django.middleware.csrf.CsrfViewMiddleware",
+  "django.contrib.auth.middleware.AuthenticationMiddleware",
+  "django.contrib.messages.middleware.MessageMiddleware",
+  "django.middleware.clickjacking.XFrameOptionsMiddleware",
+  ]
+- modify the panicbuttonproject/settings.py -> STATIC_URL
+  STATIC_URL = '/static/'
+
+#Following settings only make sense on production and may break development environments.
+
+if not DEBUG: # Tell Django to copy statics to the `staticfiles` directory # in your application directory on Render.
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') # Turn on WhiteNoise storage backend that takes care of compressing static files # and creating unique names for each version so they can safely be cached forever.
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Creating the bash.sh to run a list o commands
+
+- pip freeze > requirements.txt --> Create the list o requirements in the project
+- create a build.sh file in the main folder
+
+## build.sh file
+
+#!/usr/bin/env bash
+#exit on error
+
+set -o errexit
+
+pip install -r requirements.txt
+
+python manage.py collectstatic --no-input
+python manage.py migrate
+
+- chmod a+x build.sh
